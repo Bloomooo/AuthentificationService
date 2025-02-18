@@ -7,9 +7,9 @@ public class CCreateUser {
     public final static String MSG_NAME = "createUser";
 
     public static class Input{
-        public String name;
-        public String email;
+        public String username;
         public String password;
+        public String mail;
     }
 
     public static class Output{

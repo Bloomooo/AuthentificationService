@@ -1,6 +1,9 @@
 package org.acme.model;
 
+import org.acme.model.type.Role;
+
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,8 +22,20 @@ public class User extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-    public String name;
-    public String email;
-    public String password;
+    private int id;
+
+    @Column(name = "ROLE")
+    private Role role;
+
+    @Column(name = "USERNAME")
+    private String username;
+
+    @Column(name = "PASSWORD")
+    private String password;
+
+    @Column(name = "MAIL")
+    private String mail;
+
+    @Column(name = "TOKEN")
+    private String token;
 }
