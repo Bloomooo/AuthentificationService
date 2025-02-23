@@ -2,14 +2,11 @@ package org.acme.dto.http;
 
 import org.acme.model.User;
 
-public class CCreateUser {
-
-    public final static String MSG_NAME = "createUser";
-
+public class CLoginUser {
+    public static final String MSG_NAME = "loginUser";
     public static class Input{
         public String username;
         public String password;
-        public String mail;
     }
 
     public static class Output{

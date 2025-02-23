@@ -6,6 +6,7 @@ import java.util.Map;
 import org.acme.dto.generic.CMessageAPI;
 import org.acme.dto.generic.IGenericDTO;
 import org.acme.dto.http.CCreateUser;
+import org.acme.dto.http.CLoginUser;
 
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,6 +18,7 @@ public class CDTOGestionUser implements IGenericDTO {
 
     public CDTOGestionUser() {
         messageMap.put(CCreateUser.MSG_NAME, new CMessageAPI(CCreateUser.MSG_NAME, CCreateUser.Input.class));
+        messageMap.put(CLoginUser.MSG_NAME, new CMessageAPI(CLoginUser.MSG_NAME, CLoginUser.Input.class));
     }
 
     @Override
@@ -31,5 +33,6 @@ public class CDTOGestionUser implements IGenericDTO {
 
     public interface IHandlerDTOGestionUser{
         Uni<CCreateUser.Output> createUser(CCreateUser.Input input);
+        Uni<CLoginUser.Output> loginUser(CLoginUser.Input input);
     }
 }
