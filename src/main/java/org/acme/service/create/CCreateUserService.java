@@ -14,15 +14,21 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class CCreateUserService {
 
+    private final IUserRepository userRepository;
+
     private final Logger logger = LoggerFactory.getLogger(CCreateUserService.class);
 
+    public CCreateUserService(IUserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @WithSession
-    public Uni<User> createUser(User user, IUserRepository userRepository) {
+    public Uni<User> createUser(User user) {
         user.setRole(Role.USER);
         String hashedPassword = BcryptUtil.bcryptHash(user.getPassword());
         user.setPassword(hashedPassword);
         return Uni.createFrom().item(user)
                 .onFailure().invoke(e -> this.logger.error("Error while creating user", e))
-                .onItem().transformToUni(u -> userRepository.persistAndFlush(user));
+                .onItem().transformToUni(u -> this.userRepository.persistAndFlush(user));
     }
 }
