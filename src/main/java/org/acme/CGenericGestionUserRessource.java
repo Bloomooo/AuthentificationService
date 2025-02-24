@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 
 import org.acme.dto.CDTOGestionUser;
 import org.acme.dto.generic.IMessageAPI;
+import org.acme.dto.http.CLoginUser;
 import org.acme.handler.CGenericGestionUserHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,6 @@ public class CGenericGestionUserRessource {
     private final CGenericGestionUserHandler genericGestionUserHandler;
     private final Logger logger;
 
-    @Inject
     public CGenericGestionUserRessource(CDTOGestionUser dtoGestionUser,
             CGenericGestionUserHandler genericGestionUserHandler) {
         this.objectMapper = new ObjectMapper();
@@ -59,5 +59,11 @@ public class CGenericGestionUserRessource {
             this.logger.error("Erreur interne : " + e.getMessage());
             return Uni.createFrom().item("Erreur interne : " + e.getMessage());
         }
+    }
+
+    @POST
+    @Path("/auth/login")
+    public Uni<CLoginUser.Output> loginUser(CLoginUser.Input input) {
+        return this.genericGestionUserHandler.loginUser(input);
     }
 }

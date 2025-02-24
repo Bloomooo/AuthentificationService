@@ -7,14 +7,16 @@ import org.acme.repository.IUserRepository;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkus.elytron.security.common.BcryptUtil;
+import org.acme.security.JwtService;
 
 @ApplicationScoped
 public class CLoginUserService {
 
     private final IUserRepository userRepository;
-
-    public CLoginUserService(IUserRepository userRepository) {
+    private final JwtService jwtService;
+    public CLoginUserService(IUserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
     }
 
     @WithSession
@@ -25,12 +27,14 @@ public class CLoginUserService {
                     if (user == null) {
                         output.message = "User not found";
                         output.success = false;
+                        return output;
                     }
-                    if (user != null && !BcryptUtil.matches(input.password, user.getPassword())) {
+                    if (!BcryptUtil.matches(input.password, user.getPassword())) {
                         output.message = "Invalid password";
                         output.success = false;
+                        return output;
                     }
-                    output.user = user;
+                    output.token = this.jwtService.generateToken(user.getUsername(), user.getRole().toString());
                     output.success = true;
                     output.message = "Connexion réussie";
                     return output;

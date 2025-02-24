@@ -10,7 +10,7 @@ public class CLoginUser {
     }
 
     public static class Output{
-        public User user;
+        public String token;
         public String message;
         public boolean success;
     }

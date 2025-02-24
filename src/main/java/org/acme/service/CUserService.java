@@ -83,7 +83,7 @@ public class CUserService {
         return this.loginUserService.loginUser(input)
             .onItem().transform(out -> {
                 CLoginUser.Output output = new CLoginUser.Output();
-                output.user = out.user;
+                output.token = out.token;
                 output.message = out.message;
                 output.success = out.success;
                 return output;
