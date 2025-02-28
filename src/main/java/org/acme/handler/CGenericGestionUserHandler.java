@@ -3,6 +3,7 @@ package org.acme.handler;
 import org.acme.dto.CDTOGestionUser;
 import org.acme.dto.http.CCreateUser;
 import org.acme.dto.http.CCreateUser.Output;
+import org.acme.dto.http.CForgotPassword;
 import org.acme.dto.http.CLoginUser;
 import org.acme.service.CUserService;
 import io.smallrye.mutiny.Uni;
@@ -42,6 +43,17 @@ public class CGenericGestionUserHandler implements CDTOGestionUser.IHandlerDTOGe
             this.logger.error(e.getMessage());
             return Uni.createFrom().item(output);
         }
+    }
 
+    @Override
+    public Uni<CForgotPassword.Output> forgotPassword(CForgotPassword.Input input) {
+        CForgotPassword.Output output = new CForgotPassword.Output();
+        try{
+
+        }catch(Exception e){
+            this.logger.error(e.getMessage());
+            return Uni.createFrom().item(output);
+        }
+        return Uni.createFrom().item(output);
     }
 }
