@@ -2,7 +2,6 @@ package org.acme.handler;
 
 import org.acme.dto.CDTOGestionUser;
 import org.acme.dto.http.CCreateUser;
-import org.acme.dto.http.CCreateUser.Output;
 import org.acme.dto.http.CForgotPassword;
 import org.acme.dto.http.CLoginUser;
 import org.acme.service.CUserService;
@@ -49,11 +48,12 @@ public class CGenericGestionUserHandler implements CDTOGestionUser.IHandlerDTOGe
     public Uni<CForgotPassword.Output> forgotPassword(CForgotPassword.Input input) {
         CForgotPassword.Output output = new CForgotPassword.Output();
         try{
-
+            return (Uni<CForgotPassword.Output>) this.userService.forgotPassword(input).onItem().transform(out -> {
+                return out;
+            });
         }catch(Exception e){
             this.logger.error(e.getMessage());
             return Uni.createFrom().item(output);
         }
-        return Uni.createFrom().item(output);
     }
 }

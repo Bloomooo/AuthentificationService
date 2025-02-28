@@ -21,22 +21,27 @@ public class CLoginUserService {
     @WithSession
     public Uni<CLoginUser.Output> loginUser(CLoginUser.Input input) {
         return this.userRepository.findByUsername(input.username)
-                .onItem().transform(user -> {
+                .onItem().transformToUni(user -> {
                     CLoginUser.Output output = new CLoginUser.Output();
                     if (user == null) {
                         output.message = "User not found";
                         output.success = false;
-                        return output;
+                        return Uni.createFrom().item(output);
                     }
                     if (!BCrypt.checkpw(input.password, user.getPassword())) {
                         output.message = "Invalid password";
                         output.success = false;
-                        return output;
+                        return Uni.createFrom().item(output);
                     }
-                    output.token = this.jwtService.generateToken(user.getUsername());
-                    output.success = true;
-                    output.message = "Connexion réussie";
-                    return output;
+                    String token = this.jwtService.generateToken(user.getUsername());
+                    user.setToken(token);
+                    return this.userRepository.persistAndFlush(user)
+                            .onItem().transform(v -> {
+                                output.token = token;
+                                output.success = true;
+                                output.message = "Connexion réussie";
+                                return output;
+                            });
                 });
     }
 }

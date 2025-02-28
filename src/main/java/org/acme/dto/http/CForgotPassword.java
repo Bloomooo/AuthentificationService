@@ -4,7 +4,6 @@ public class CForgotPassword {
     public static final String MSG_NAME = "forgotPassword";
 
     public static class Input{
-        public String email;
         public String password;
         public String token;
     }

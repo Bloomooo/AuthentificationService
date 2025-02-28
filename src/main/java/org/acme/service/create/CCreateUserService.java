@@ -1,10 +1,9 @@
 package org.acme.service.create;
 
-import jakarta.inject.Inject;
+import org.acme.config.Environment;
 import org.acme.model.User;
 import org.acme.model.type.Role;
 import org.acme.repository.IUserRepository;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,21 +16,18 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class CCreateUserService {
 
     private final IUserRepository userRepository;
-
+    private final Environment environment;
     private final Logger logger = LoggerFactory.getLogger(CCreateUserService.class);
 
-    @Inject
-    @ConfigProperty(name = "PERSONAL_SALT")
-    String PERSONAL_SALT;
-
-    public CCreateUserService(IUserRepository userRepository) {
+    public CCreateUserService(IUserRepository userRepository, Environment environment) {
         this.userRepository = userRepository;
+        this.environment = environment;
     }
 
     @WithSession
     public Uni<User> createUser(User user) {
         user.setRole(Role.USER);
-        String hashedPassword = BCrypt.hashpw(user.getPassword(), PERSONAL_SALT);
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), this.environment.getPersonalSalt());
         user.setPassword(hashedPassword);
         return Uni.createFrom().item(user)
                 .onFailure().invoke(e -> this.logger.error("Error while creating user", e))

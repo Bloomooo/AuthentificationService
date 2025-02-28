@@ -3,11 +3,13 @@ package org.acme.service;
 import java.util.List;
 
 import org.acme.dto.http.CCreateUser;
+import org.acme.dto.http.CForgotPassword;
 import org.acme.dto.http.CLoginUser;
 import org.acme.model.User;
 import org.acme.repository.IUserRepository;
 import org.acme.service.common.CUserCommonService;
 import org.acme.service.create.CCreateUserService;
+import org.acme.service.create.CForgotPasswordUserService;
 import org.acme.service.login.CLoginUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +23,15 @@ public class CUserService {
     private final CCreateUserService createUserService;
     private final CUserCommonService commonService;
     private final CLoginUserService loginUserService;
+    private final CForgotPasswordUserService forgotPasswordUserService;
     private final Logger logger = LoggerFactory.getLogger(CUserService.class);
 
     public CUserService(IUserRepository userRepository, CCreateUserService createUserService,
-            CUserCommonService commonService, CLoginUserService loginUserService) {
+            CUserCommonService commonService, CLoginUserService loginUserService, CForgotPasswordUserService forgotPasswordUserService) {
         this.createUserService = createUserService;
         this.commonService = commonService;
         this.loginUserService = loginUserService;
+        this.forgotPasswordUserService = forgotPasswordUserService;
     }
 
     public Uni<CCreateUser.Output> createUser(CCreateUser.Input input) {
@@ -95,6 +99,22 @@ public class CUserService {
                 output.success = false;
                 return output;
             });
+    }
+
+    public Uni<CForgotPassword.Output> forgotPassword(CForgotPassword.Input input) {
+        return this.forgotPasswordUserService.forgotPassword(input)
+                .onItem().transform(out -> {
+                   CForgotPassword.Output output = new CForgotPassword.Output();
+                     output.message = out.message;
+                        output.isSuccess = out.isSuccess;
+                        return output;
+                })
+                .onFailure().recoverWithItem(e -> {
+                    CForgotPassword.Output output = new CForgotPassword.Output();
+                    output.message = "Erreur lors de la récupération du mot de passe";
+                    output.isSuccess = false;
+                    return output;
+                });
     }
 }
 

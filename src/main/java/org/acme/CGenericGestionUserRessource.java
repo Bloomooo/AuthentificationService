@@ -2,6 +2,9 @@ package org.acme;
 
 import java.lang.reflect.Method;
 
+import io.quarkus.security.identity.IdentityProviderManager;
+import io.quarkus.security.identity.SecurityIdentity;
+import jakarta.ws.rs.GET;
 import org.acme.dto.CDTOGestionUser;
 import org.acme.dto.generic.IMessageAPI;
 import org.acme.dto.http.CLoginUser;
@@ -26,7 +29,7 @@ public class CGenericGestionUserRessource {
     private final Logger logger;
 
     public CGenericGestionUserRessource(CDTOGestionUser dtoGestionUser,
-            CGenericGestionUserHandler genericGestionUserHandler) {
+                                        CGenericGestionUserHandler genericGestionUserHandler) {
         this.objectMapper = new ObjectMapper();
         this.dtoGestionUser = dtoGestionUser;
         this.genericGestionUserHandler = genericGestionUserHandler;
@@ -59,11 +62,5 @@ public class CGenericGestionUserRessource {
             this.logger.error("Erreur interne : " + e.getMessage());
             return Uni.createFrom().item("Erreur interne : " + e.getMessage());
         }
-    }
-
-    @POST
-    @Path("/auth/login")
-    public Uni<CLoginUser.Output> loginUser(CLoginUser.Input input) {
-        return this.genericGestionUserHandler.loginUser(input);
     }
 }
