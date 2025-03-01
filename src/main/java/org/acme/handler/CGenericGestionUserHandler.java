@@ -1,9 +1,7 @@
 package org.acme.handler;
 
 import org.acme.dto.CDTOGestionUser;
-import org.acme.dto.http.CCreateUser;
-import org.acme.dto.http.CForgotPassword;
-import org.acme.dto.http.CLoginUser;
+import org.acme.dto.http.*;
 import org.acme.service.CUserService;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -24,17 +22,13 @@ public class CGenericGestionUserHandler implements CDTOGestionUser.IHandlerDTOGe
 
     @Override
     public Uni<CCreateUser.Output> createUser(CCreateUser.Input input) {
-        return (Uni<CCreateUser.Output>) this.userService.createUser(input).onItem().transform(output -> {
-            return output;
-        });
+        return this.userService.createUser(input).onItem().transform(output -> output);
     }
 
     @Override
     public Uni<CLoginUser.Output> loginUser(CLoginUser.Input input) {
         try{
-            return (Uni<CLoginUser.Output>) this.userService.loginUser(input).onItem().transform(out -> {
-                return out;
-            });
+            return this.userService.loginUser(input).onItem().transform(out -> out);
         } catch (Exception e) {
             CLoginUser.Output output = new CLoginUser.Output();
             output.message = e.getMessage();
@@ -48,12 +42,47 @@ public class CGenericGestionUserHandler implements CDTOGestionUser.IHandlerDTOGe
     public Uni<CForgotPassword.Output> forgotPassword(CForgotPassword.Input input) {
         CForgotPassword.Output output = new CForgotPassword.Output();
         try{
-            return (Uni<CForgotPassword.Output>) this.userService.forgotPassword(input).onItem().transform(out -> {
-                return out;
-            });
+            return this.userService.forgotPassword(input).onItem().transform(out -> out);
         }catch(Exception e){
             this.logger.error(e.getMessage());
             return Uni.createFrom().item(output);
         }
+    }
+
+    /**
+     * @param input 
+     * @return
+     */
+    @Override
+    public Uni<CDeleteUser.Output> deleteUser(CDeleteUser.Input input) {
+        return this.userService.deleteUser(input)
+                .onItem().transform(out -> out);
+    }
+
+    /**
+     * @param input 
+     * @return
+     */
+    @Override
+    public Uni<CEditUser.Output> editUser(CEditUser.Input input) {
+        return this.userService.updateUser(input).onItem().transform(out -> out);
+    }
+
+    /**
+     * @param input 
+     * @return
+     */
+    @Override
+    public Uni<CGetAllUsers.Output> getAllUsers(CGetAllUsers.Input input) {
+        return this.userService.getAllUsers(input).onItem().transform(out-> out);
+    }
+
+    /**
+     * @param input 
+     * @return
+     */
+    @Override
+    public Uni<CFilterUsers.Output> filterUsers(CFilterUsers.Input input) {
+        return this.userService.filterUsers(input).onItem().transform(out-> out);
     }
 }

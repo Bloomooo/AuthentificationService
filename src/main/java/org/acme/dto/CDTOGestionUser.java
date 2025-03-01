@@ -5,9 +5,7 @@ import java.util.Map;
 
 import org.acme.dto.generic.CMessageAPI;
 import org.acme.dto.generic.IGenericDTO;
-import org.acme.dto.http.CCreateUser;
-import org.acme.dto.http.CForgotPassword;
-import org.acme.dto.http.CLoginUser;
+import org.acme.dto.http.*;
 
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,6 +19,10 @@ public class CDTOGestionUser implements IGenericDTO {
         messageMap.put(CCreateUser.MSG_NAME, new CMessageAPI(CCreateUser.MSG_NAME, CCreateUser.Input.class));
         messageMap.put(CLoginUser.MSG_NAME, new CMessageAPI(CLoginUser.MSG_NAME, CLoginUser.Input.class));
         messageMap.put(CForgotPassword.MSG_NAME, new CMessageAPI(CForgotPassword.MSG_NAME, CForgotPassword.Input.class));
+        messageMap.put(CDeleteUser.MSG_NAME, new CMessageAPI(CDeleteUser.MSG_NAME, CDeleteUser.Input.class));
+        messageMap.put(CEditUser.MSG_NAME, new CMessageAPI(CEditUser.MSG_NAME, CEditUser.Input.class));
+        messageMap.put(CGetAllUsers.MSG_NAME, new CMessageAPI(CGetAllUsers.MSG_NAME, CGetAllUsers.Input.class));
+        messageMap.put(CFilterUsers.MSG_NAME, new CMessageAPI(CFilterUsers.MSG_NAME, CFilterUsers.Input.class));
     }
 
     @Override
@@ -37,5 +39,9 @@ public class CDTOGestionUser implements IGenericDTO {
         Uni<CCreateUser.Output> createUser(CCreateUser.Input input);
         Uni<CLoginUser.Output> loginUser(CLoginUser.Input input);
         Uni<CForgotPassword.Output> forgotPassword(CForgotPassword.Input input);
+        Uni<CDeleteUser.Output> deleteUser(CDeleteUser.Input input);
+        Uni<CEditUser.Output> editUser(CEditUser.Input input);
+        Uni<CGetAllUsers.Output> getAllUsers(CGetAllUsers.Input input);
+        Uni<CFilterUsers.Output> filterUsers(CFilterUsers.Input input);
     }
 }

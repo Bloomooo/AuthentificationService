@@ -7,6 +7,8 @@ import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.util.List;
+
 @ApplicationScoped
 public class CUserCommonService {
 
@@ -47,5 +49,17 @@ public class CUserCommonService {
     @WithSession
     public Uni<Boolean> isMailAlreadyExists(String mail){
         return this.userRepository.isMailAlreadyExists(mail);
+    }
+
+    @WithSession
+    public Uni<List<User>> getAllUsers(){
+        return this.userRepository.listAll();
+    }
+
+    @WithSession
+    public Uni<List<User>> filterUsers(String name){
+        return this.userRepository.listAll().onItem().transform(users -> {;
+            return users.stream().filter(user -> user.getUsername().toLowerCase().contains(name.toLowerCase())).toList();
+        });
     }
 }

@@ -2,15 +2,14 @@ package org.acme.service;
 
 import java.util.List;
 
-import org.acme.dto.http.CCreateUser;
-import org.acme.dto.http.CForgotPassword;
-import org.acme.dto.http.CLoginUser;
+import org.acme.dto.http.*;
 import org.acme.model.User;
 import org.acme.repository.IUserRepository;
 import org.acme.service.common.CUserCommonService;
 import org.acme.service.create.CCreateUserService;
 import org.acme.service.create.CForgotPasswordUserService;
 import org.acme.service.login.CLoginUserService;
+import org.acme.service.update.CUpdateUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,14 +23,16 @@ public class CUserService {
     private final CUserCommonService commonService;
     private final CLoginUserService loginUserService;
     private final CForgotPasswordUserService forgotPasswordUserService;
+    private final CUpdateUserService updateUserService;
     private final Logger logger = LoggerFactory.getLogger(CUserService.class);
 
     public CUserService(IUserRepository userRepository, CCreateUserService createUserService,
-            CUserCommonService commonService, CLoginUserService loginUserService, CForgotPasswordUserService forgotPasswordUserService) {
+            CUserCommonService commonService, CLoginUserService loginUserService, CForgotPasswordUserService forgotPasswordUserService, CUpdateUserService updateUserService) {
         this.createUserService = createUserService;
         this.commonService = commonService;
         this.loginUserService = loginUserService;
         this.forgotPasswordUserService = forgotPasswordUserService;
+        this.updateUserService = updateUserService;
     }
 
     public Uni<CCreateUser.Output> createUser(CCreateUser.Input input) {
@@ -115,6 +116,83 @@ public class CUserService {
                     output.isSuccess = false;
                     return output;
                 });
+    }
+
+    public Uni<CDeleteUser.Output> deleteUser(CDeleteUser.Input input) {
+        return this.updateUserService.deleteUser(input.id)
+            .onItem().transform(success -> {
+                CDeleteUser.Output output = new CDeleteUser.Output();
+                if(success){
+                    output.message = "Utilisateur supprimé avec succès";
+                    output.isSuccess = true;
+                }else {
+                    output.message = "Erreur lors de la suppression de l'utilisateur";
+                    output.isSuccess = false;
+                }
+                return output;
+            })
+            .onFailure().recoverWithItem(e -> {
+                this.logger.error("Error while deleting user"+e);
+                CDeleteUser.Output output = new CDeleteUser.Output();
+                output.message = "Erreur lors de la suppression de l'utilisateur";
+                output.isSuccess = false;
+                return output;
+            });
+    }
+
+    public Uni<CEditUser.Output> updateUser(CEditUser.Input input) {
+        return this.updateUserService.updateUser(input.user)
+                .onItem().transform(success ->{
+                    CEditUser.Output output = new CEditUser.Output();
+                    if(success){
+                        output.message = "Utilisateur modifié avec succès";
+                        output.isSuccess = true;
+                    }else {
+                        output.message = "Erreur lors de la modification de l'utilisateur";
+                        output.isSuccess = false;
+                    }
+                    return output;
+                })
+                .onFailure().recoverWithItem(e ->{
+                    this.logger.error("Error while updating user"+e);
+                    CEditUser.Output output = new CEditUser.Output();
+                    output.message = "Erreur lors de la modification de l'utilisateur";
+                    output.isSuccess = false;
+                    return output;
+                });
+    }
+
+    public Uni<CGetAllUsers.Output> getAllUsers(CGetAllUsers.Input input) {
+        return this.commonService.getAllUsers()
+            .onItem().transform(users -> {
+                CGetAllUsers.Output output = new CGetAllUsers.Output();
+                output.users = users;
+                return output;
+            })
+            .onFailure().recoverWithItem(e -> {
+                this.logger.error("Error while getting all users", e);
+                CGetAllUsers.Output output = new CGetAllUsers.Output();
+                output.message = "Erreur lors de la récupération des utilisateurs";
+                return output;
+            });
+    }
+
+    public Uni<CFilterUsers.Output> filterUsers(CFilterUsers.Input input) {
+        return this.commonService.filterUsers(input.name)
+            .onItem().transform(users -> {
+                CFilterUsers.Output output = new CFilterUsers.Output();
+                output.users = users;
+                output.isSuccess = true;
+                output.message = "Utilisateurs récupérés avec succès";
+                return output;
+            })
+            .onFailure().recoverWithItem(e -> {
+                this.logger.error("Error while filtering users", e);
+                CFilterUsers.Output output = new CFilterUsers.Output();
+                output.message = "Erreur lors de la récupération des utilisateurs";
+                output.isSuccess = false;
+                return output;
+            });
     }
 }
 
