@@ -23,8 +23,8 @@ public class CForgotPasswordUserService {
 
     @WithSession
     public Uni<CForgotPassword.Output> forgotPassword(CForgotPassword.Input input) {
-        String username = jwtService.extractUsername(input.token);
-        return this.userRepository.findByUsername(username)
+        String email = jwtService.extractUsername(input.token);
+        return this.userRepository.findByMail(email)
                 .onItem().transformToUni(user -> {
                     CForgotPassword.Output output = new CForgotPassword.Output();
                     if (user == null) {
