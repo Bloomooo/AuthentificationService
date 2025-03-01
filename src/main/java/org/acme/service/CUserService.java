@@ -1,8 +1,10 @@
 package org.acme.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.acme.dto.http.*;
+import org.acme.mapper.IUserMapper;
 import org.acme.model.User;
 import org.acme.repository.IUserRepository;
 import org.acme.service.common.CUserCommonService;
@@ -71,7 +73,7 @@ public class CUserService {
                         }
                         return this.createUserService.createUser(user)
                             .onItem().transform(createdUser -> {
-                                output.user = createdUser;
+                                output.user = IUserMapper.INSTANCE.userToUserDTO(createdUser);
                                 output.message = "Utilisateur créé avec succès";
                                 output.success = true;
                                 return output;
@@ -143,7 +145,7 @@ public class CUserService {
     }
 
     public Uni<CEditUser.Output> updateUser(CEditUser.Input input) {
-        return this.updateUserService.updateUser(input.user)
+        return this.updateUserService.updateUser(IUserMapper.INSTANCE.userDTOToUser(input.user))
                 .onItem().transform(success ->{
                     CEditUser.Output output = new CEditUser.Output();
                     if(success){
@@ -168,7 +170,7 @@ public class CUserService {
         return this.commonService.getAllUsers()
             .onItem().transform(users -> {
                 CGetAllUsers.Output output = new CGetAllUsers.Output();
-                output.users = users;
+                output.users = users.stream().map(IUserMapper.INSTANCE::userToUserDTO).collect(Collectors.toList());
                 output.isSuccess = true;
                 output.message = "Utilisateurs récupérés avec succès";
                 return output;
@@ -204,7 +206,7 @@ public class CUserService {
         return this.commonService.getUserByEmail(input.email)
             .onItem().transform(user -> {
                 CGetUserByEmail.Output output = new CGetUserByEmail.Output();
-                output.user = user;
+                output.user = IUserMapper.INSTANCE.userToUserDTO(user);
                 output.isSuccess = true;
                 output.message = "Utilisateur récupéré avec succès";
                 return output;
@@ -223,7 +225,7 @@ public class CUserService {
                 .onItem().transform(u -> {
                     CSearchUserByToken.Output output = new CSearchUserByToken.Output();
                     if(u != null){
-                        output.user = u;
+                        output.user = IUserMapper.INSTANCE.userToUserDTO(u);
                         output.message = "Utilisateur récupéré avec succès";
                         output.isSuccess = true;
                     }else{

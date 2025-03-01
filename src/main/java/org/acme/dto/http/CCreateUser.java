@@ -1,6 +1,6 @@
 package org.acme.dto.http;
 
-import org.acme.model.User;
+import org.acme.dto.model.UserDTO;
 
 public class CCreateUser {
 
@@ -13,7 +13,7 @@ public class CCreateUser {
     }
 
     public static class Output{
-        public User user;
+        public UserDTO user;
         public String message;
         public boolean success;
     }

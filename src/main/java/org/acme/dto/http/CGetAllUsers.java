@@ -1,8 +1,6 @@
 package org.acme.dto.http;
 
-import org.acme.model.User;
-
-import java.util.ArrayList;
+import org.acme.dto.model.UserDTO;
 import java.util.List;
 
 public class CGetAllUsers {
@@ -13,7 +11,7 @@ public class CGetAllUsers {
     }
 
     public static class Output{
-        public List<User> users;
+        public List<UserDTO> users;
         public boolean isSuccess;
         public String message;
     }

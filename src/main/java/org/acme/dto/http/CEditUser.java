@@ -1,12 +1,12 @@
 package org.acme.dto.http;
 
-import org.acme.model.User;
+import org.acme.dto.model.UserDTO;
 
 public class CEditUser {
     public static final String MSG_NAME = "editUser";
 
     public static class Input{
-        public User user;
+        public UserDTO user;
     }
 
     public static class Output {

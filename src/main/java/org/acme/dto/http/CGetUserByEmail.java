@@ -1,6 +1,6 @@
 package org.acme.dto.http;
 
-import org.acme.model.User;
+import org.acme.dto.model.UserDTO;
 
 public class CGetUserByEmail {
     public static final String MSG_NAME = "getUserByEmail";
@@ -10,7 +10,7 @@ public class CGetUserByEmail {
     }
 
     public static class Output{
-        public User user;
+        public UserDTO user;
         public boolean isSuccess;
         public String message;
     }
