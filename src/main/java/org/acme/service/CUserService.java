@@ -24,15 +24,17 @@ public class CUserService {
     private final CLoginUserService loginUserService;
     private final CForgotPasswordUserService forgotPasswordUserService;
     private final CUpdateUserService updateUserService;
+    private final CMailSenderService mailSenderService;
     private final Logger logger = LoggerFactory.getLogger(CUserService.class);
 
     public CUserService(IUserRepository userRepository, CCreateUserService createUserService,
-            CUserCommonService commonService, CLoginUserService loginUserService, CForgotPasswordUserService forgotPasswordUserService, CUpdateUserService updateUserService) {
+            CUserCommonService commonService, CLoginUserService loginUserService, CForgotPasswordUserService forgotPasswordUserService, CUpdateUserService updateUserService, CMailSenderService mailSenderService) {
         this.createUserService = createUserService;
         this.commonService = commonService;
         this.loginUserService = loginUserService;
         this.forgotPasswordUserService = forgotPasswordUserService;
         this.updateUserService = updateUserService;
+        this.mailSenderService = mailSenderService;
     }
 
     public Uni<CCreateUser.Output> createUser(CCreateUser.Input input) {
@@ -214,6 +216,61 @@ public class CUserService {
                 output.isSuccess = false;
                 return output;
             });
+    }
+
+    public Uni<CSearchUserByToken.Output> getUserByToken(CSearchUserByToken.Input input) {
+        return this.commonService.getUserByToken(input.token)
+                .onItem().transform(u -> {
+                    CSearchUserByToken.Output output = new CSearchUserByToken.Output();
+                    if(u != null){
+                        output.user = u;
+                        output.message = "Utilisateur récupéré avec succès";
+                        output.isSuccess = true;
+                    }else{
+                        output.message = "Utilisateur non trouvé";
+                        output.isSuccess = false;
+                    }
+                    return output;
+                })
+                .onFailure().recoverWithItem(e ->{
+                    this.logger.error("Error while getting user by token", e);
+                    CSearchUserByToken.Output output = new CSearchUserByToken.Output();
+                    output.message = "Erreur lors de la récupération de l'utilisateur";
+                    output.isSuccess = false;
+                    return output;
+                });
+    }
+
+    public Uni<CSendMail.Output> sendMail(CSendMail.Input input){
+        return this.commonService.getUserByEmail(input.email)
+                .onItem().transformToUni(u -> {
+                    if(u != null) {
+                        return this.mailSenderService.sendEmail(u.getMail())
+                                .onItem().transform(success -> {;
+                                    CSendMail.Output output = new CSendMail.Output();
+                                    if(success){
+                                        output.message = "Mail envoyé avec succès";
+                                        output.isSuccess = true;
+                                    }else{
+                                        output.message = "Erreur lors de l'envoi du mail";
+                                        output.isSuccess = false;
+                                    }
+                                    return output;
+                                });
+                    }else{
+                        CSendMail.Output output = new CSendMail.Output();
+                        output.message = "Utilisateur non trouvé";
+                        output.isSuccess = false;
+                        return Uni.createFrom().item(output);
+                    }
+                })
+                .onFailure().recoverWithItem(e -> {;
+                    this.logger.error("Error while getting user by email", e);
+                    CSendMail.Output output = new CSendMail.Output();
+                    output.message = "Erreur lors de la récupération de l'utilisateur";
+                    output.isSuccess = false;
+                    return output;
+                });
     }
 }
 

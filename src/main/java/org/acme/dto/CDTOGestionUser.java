@@ -24,6 +24,8 @@ public class CDTOGestionUser implements IGenericDTO {
         messageMap.put(CGetAllUsers.MSG_NAME, new CMessageAPI(CGetAllUsers.MSG_NAME, CGetAllUsers.Input.class));
         messageMap.put(CFilterUsers.MSG_NAME, new CMessageAPI(CFilterUsers.MSG_NAME, CFilterUsers.Input.class));
         messageMap.put(CGetUserByEmail.MSG_NAME, new CMessageAPI(CGetUserByEmail.MSG_NAME, CGetUserByEmail.Input.class));
+        messageMap.put(CSearchUserByToken.MSG_NAME, new CMessageAPI(CSearchUserByToken.MSG_NAME, CSearchUserByToken.Input.class));
+        messageMap.put(CSendMail.MSG_NAME, new CMessageAPI(CSendMail.MSG_NAME, CSendMail.Input.class));
     }
 
     @Override
@@ -45,5 +47,7 @@ public class CDTOGestionUser implements IGenericDTO {
         Uni<CGetAllUsers.Output> getAllUsers(CGetAllUsers.Input input);
         Uni<CFilterUsers.Output> filterUsers(CFilterUsers.Input input);
         Uni<CGetUserByEmail.Output> getUserByEmail(CGetUserByEmail.Input input);
+        Uni<CSearchUserByToken.Output> searchUserByToken(CSearchUserByToken.Input input);
+        Uni<CSendMail.Output> sendMail(CSendMail.Input input);
     }
 }

@@ -67,4 +67,9 @@ public class CUserCommonService {
     public Uni<User> getUserByEmail(String mail){
         return this.userRepository.findByMail(mail);
     }
+
+    @WithSession
+    public Uni<User> getUserByToken(String token){
+        return this.userRepository.find("token", token).firstResult();
+    }
 }
