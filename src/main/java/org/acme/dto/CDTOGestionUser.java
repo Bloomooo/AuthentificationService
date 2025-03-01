@@ -23,6 +23,7 @@ public class CDTOGestionUser implements IGenericDTO {
         messageMap.put(CEditUser.MSG_NAME, new CMessageAPI(CEditUser.MSG_NAME, CEditUser.Input.class));
         messageMap.put(CGetAllUsers.MSG_NAME, new CMessageAPI(CGetAllUsers.MSG_NAME, CGetAllUsers.Input.class));
         messageMap.put(CFilterUsers.MSG_NAME, new CMessageAPI(CFilterUsers.MSG_NAME, CFilterUsers.Input.class));
+        messageMap.put(CGetUserByEmail.MSG_NAME, new CMessageAPI(CGetUserByEmail.MSG_NAME, CGetUserByEmail.Input.class));
     }
 
     @Override
@@ -43,5 +44,6 @@ public class CDTOGestionUser implements IGenericDTO {
         Uni<CEditUser.Output> editUser(CEditUser.Input input);
         Uni<CGetAllUsers.Output> getAllUsers(CGetAllUsers.Input input);
         Uni<CFilterUsers.Output> filterUsers(CFilterUsers.Input input);
+        Uni<CGetUserByEmail.Output> getUserByEmail(CGetUserByEmail.Input input);
     }
 }

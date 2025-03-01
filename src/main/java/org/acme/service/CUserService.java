@@ -167,12 +167,15 @@ public class CUserService {
             .onItem().transform(users -> {
                 CGetAllUsers.Output output = new CGetAllUsers.Output();
                 output.users = users;
+                output.isSuccess = true;
+                output.message = "Utilisateurs récupérés avec succès";
                 return output;
             })
             .onFailure().recoverWithItem(e -> {
                 this.logger.error("Error while getting all users", e);
                 CGetAllUsers.Output output = new CGetAllUsers.Output();
                 output.message = "Erreur lors de la récupération des utilisateurs";
+                output.isSuccess = false;
                 return output;
             });
     }
@@ -190,6 +193,24 @@ public class CUserService {
                 this.logger.error("Error while filtering users", e);
                 CFilterUsers.Output output = new CFilterUsers.Output();
                 output.message = "Erreur lors de la récupération des utilisateurs";
+                output.isSuccess = false;
+                return output;
+            });
+    }
+
+    public Uni<CGetUserByEmail.Output> getUserByEmail(CGetUserByEmail.Input input) {
+        return this.commonService.getUserByEmail(input.email)
+            .onItem().transform(user -> {
+                CGetUserByEmail.Output output = new CGetUserByEmail.Output();
+                output.user = user;
+                output.isSuccess = true;
+                output.message = "Utilisateur récupéré avec succès";
+                return output;
+            })
+            .onFailure().recoverWithItem(e -> {
+                this.logger.error("Error while getting user by email", e);
+                CGetUserByEmail.Output output = new CGetUserByEmail.Output();
+                output.message = "Erreur lors de la récupération de l'utilisateur";
                 output.isSuccess = false;
                 return output;
             });

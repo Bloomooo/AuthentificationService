@@ -62,4 +62,9 @@ public class CUserCommonService {
             return users.stream().filter(user -> user.getUsername().toLowerCase().contains(name.toLowerCase())).toList();
         });
     }
+
+    @WithSession
+    public Uni<User> getUserByEmail(String mail){
+        return this.userRepository.findByMail(mail);
+    }
 }

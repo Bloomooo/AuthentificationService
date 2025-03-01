@@ -85,4 +85,13 @@ public class CGenericGestionUserHandler implements CDTOGestionUser.IHandlerDTOGe
     public Uni<CFilterUsers.Output> filterUsers(CFilterUsers.Input input) {
         return this.userService.filterUsers(input).onItem().transform(out-> out);
     }
+
+    /**
+     * @param input 
+     * @return
+     */
+    @Override
+    public Uni<CGetUserByEmail.Output> getUserByEmail(CGetUserByEmail.Input input) {
+        return this.userService.getUserByEmail(input).onItem().transform(out -> out);
+    }
 }
